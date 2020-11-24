@@ -10,6 +10,7 @@ python-dotenv = "^0.15.0"
 fastapi = "^0.61.2"
 uvicorn = "^0.12.3"
 elasticsearch = {extras = ["async"], version = "^7.10.0"}
+loguru = "^0.5.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^4.6"

@@ -13,7 +13,7 @@ class SubmarineSector(BaseModel):
 
 
 class SubmarineRoute(BaseModel):
-    required_rank: int = Field(alias= "Rank")
+    required_rank: int = Field(alias="Rank")
     map_id: int = Field(alias="MapID")
     map_name: str = Field(alias="Map")
     distance: int = Field(alias="Distance")
