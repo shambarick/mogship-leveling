@@ -18,12 +18,24 @@ router = APIRouter()
 
 def get_term_query_from_list(values: List, field_name: str):
     return [
-        {
+        get_term_query(value, field_name) for value in values
+    ]
+
+def get_term_query(value, field_name):
+    return {
             'term': {
                 field_name: value
             }
-        } for value in values
-    ]
+    }
+
+def get_range_query(value, field_name):
+    return {
+            'range': {
+                field_name: {
+                    'lte': value
+                }
+            }
+    }
 
 
 @router.get("", response_model=List[SubmarineRoute])
@@ -31,12 +43,15 @@ async def get_routes(
     required_rank: int = Query(1, alias="rank", ge=1, le=75),
     required_range: int = Query(70, alias="range"),
     size: int = Query(100, ge=1),
+    max_distance: Optional[int] = Query(None, alias="maxDistance"),
     include_sectors: Optional[List[str]] = Depends(parse_list_include_sectors),
     exclude_sectors: Optional[List[str]] = Depends(parse_list_exclude_sectors),
     maps: Optional[List[str]] = Depends(parse_list_maps),
     include_maps: Optional[List[str]] = Depends(parse_list_include_maps),
     exclude_maps: Optional[List[str]] = Depends(parse_list_exclude_maps),
 ):
+    query_max_distance = [get_range_query(max_distance, 'Distance')] if max_distance and max_distance > 0 else []
+    print(query_max_distance)
     query_include_sectors = get_term_query_from_list(include_sectors, 'Route')
     query_exclude_sectors = get_term_query_from_list(exclude_sectors, 'Route')
     query_include_maps = get_term_query_from_list(include_maps, 'MapID')
@@ -65,6 +80,7 @@ async def get_routes(
                                 }
                             }
                         },
+                        *query_max_distance,
                         *query_include_sectors,
                         *query_include_maps,
                     ],
