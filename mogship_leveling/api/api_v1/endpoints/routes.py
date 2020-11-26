@@ -21,12 +21,14 @@ def get_term_query_from_list(values: List, field_name: str):
         get_term_query(value, field_name) for value in values
     ]
 
+
 def get_term_query(value, field_name):
     return {
             'term': {
                 field_name: value
             }
     }
+
 
 def get_range_query(value, field_name):
     return {
@@ -43,6 +45,7 @@ async def get_routes(
     required_rank: int = Query(1, alias="rank", ge=1, le=75),
     required_range: int = Query(70, alias="range"),
     size: int = Query(100, ge=1),
+    exp: Optional[int] = Query(None, alias="exp"),
     max_distance: Optional[int] = Query(None, alias="maxDistance"),
     include_sectors: Optional[List[str]] = Depends(parse_list_include_sectors),
     exclude_sectors: Optional[List[str]] = Depends(parse_list_exclude_sectors),
@@ -51,12 +54,18 @@ async def get_routes(
     exclude_maps: Optional[List[str]] = Depends(parse_list_exclude_maps),
 ):
     query_max_distance = [get_range_query(max_distance, 'Distance')] if max_distance and max_distance > 0 else []
-    print(query_max_distance)
     query_include_sectors = get_term_query_from_list(include_sectors, 'Route')
     query_exclude_sectors = get_term_query_from_list(exclude_sectors, 'Route')
     query_include_maps = get_term_query_from_list(include_maps, 'MapID')
     query_maps = get_term_query_from_list(maps, 'MapID')
     query_exclude_maps = get_term_query_from_list(exclude_maps, 'MapID')
+    query_exp = [{
+        'range': {
+            'Exp': {
+                'gte': exp,
+            },
+        },
+    }] if exp is not None else []
 
     query = {
             'size': size,
@@ -80,6 +89,7 @@ async def get_routes(
                                 }
                             }
                         },
+                        *query_exp,
                         *query_max_distance,
                         *query_include_sectors,
                         *query_include_maps,
