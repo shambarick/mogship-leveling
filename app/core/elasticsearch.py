@@ -1,6 +1,6 @@
 from elasticsearch import AsyncElasticsearch
 
-from mogship_leveling.core import config
+from app.core import config
 
 
 class Database:

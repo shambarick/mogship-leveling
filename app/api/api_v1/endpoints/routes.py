@@ -3,15 +3,15 @@ from typing import List, Optional
 from fastapi import APIRouter, Depends, Query
 from loguru import logger
 
-from mogship_leveling.api.deps import (
+from app.api.deps import (
     parse_list_exclude_maps,
     parse_list_exclude_sectors,
     parse_list_include_sectors,
     parse_list_maps,
     parse_list_include_maps
 )
-from mogship_leveling.models.route import SubmarineRoute
-from mogship_leveling.core.elasticsearch import get_client
+from app.models.route import SubmarineRoute
+from app.core.elasticsearch import get_client
 
 router = APIRouter()
 
@@ -42,7 +42,7 @@ def get_range_query(value, field_name):
 
 @router.get("", response_model=List[SubmarineRoute])
 async def get_routes(
-    required_rank: int = Query(1, alias="rank", ge=1, le=75),
+    required_rank: int = Query(1, alias="rank", ge=1, le=80),
     required_range: int = Query(70, alias="range"),
     size: int = Query(100, ge=1),
     exp: Optional[int] = Query(None, alias="exp"),
@@ -114,10 +114,8 @@ async def get_routes(
             ]
     }
 
-    logger.bind(payload=query).debug('ES query')
-
     results = await get_client().search(
-        index="submarinelevelings-1",
+        index="submarineleveling",
         body=query,
     )
     hits = [SubmarineRoute(**r['_source']) for r in results['hits']['hits']]

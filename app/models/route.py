@@ -5,9 +5,9 @@ from pydantic import BaseModel, Field
 class SubmarineSector(BaseModel):
     name: str = Field(alias="Name")
     map_id: int = Field(alias="MapID")
-    map_name: str = Field(alias="Map")
+    map_name: dict = Field(alias="Map")
     required_rank: int = Field(alias="Rank")
-    sector_id: int = Field(alias="SectorID")
+    sector_id: int = Field(alias="SectorId")
     alias_name: str = Field(alias="AliasName")
     exp: int = Field(alias="Exp")
 
@@ -15,7 +15,7 @@ class SubmarineSector(BaseModel):
 class SubmarineRoute(BaseModel):
     required_rank: int = Field(alias="Rank")
     map_id: int = Field(alias="MapID")
-    map_name: str = Field(alias="Map")
+    map_name: dict = Field(alias="Map")
     distance: int = Field(alias="Distance")
     sectors_total: int = Field(alias="SectorsTotal")
     exp: int = Field(alias="Exp")
