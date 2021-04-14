@@ -42,7 +42,7 @@ def get_range_query(value, field_name):
 
 @router.get("", response_model=List[SubmarineRoute])
 async def get_routes(
-    required_rank: int = Query(1, alias="rank", ge=1, le=80),
+    required_rank: int = Query(1, alias="rank", ge=1, le=90),
     required_range: int = Query(70, alias="range"),
     size: int = Query(100, ge=1),
     exp: Optional[int] = Query(None, alias="exp"),
